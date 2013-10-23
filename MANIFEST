@@ -1,9 +1,27 @@
 Build.PL
 Changes
 lib/Nifty/Config.pm
+Makefile
 MANIFEST			This list of files
+MANIFEST.SKIP
+META.json
+META.yml
 README
 t/00-load.t
+t/10-dir.t
+t/boilerplate.t
+t/data/all/first.yml
+t/data/all/second.yml
+t/data/deep/dir1/level2.yml
+t/data/deep/dir2/a.yml
+t/data/deep/dir2/b.yml
+t/data/deep/l1.yml
+t/data/hidden/.hidden
+t/data/hidden/non-hidden.yml
+t/data/match/aa.yml
+t/data/match/x.yml
+t/data/merge/00-first.yml
+t/data/merge/15-second.yml
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

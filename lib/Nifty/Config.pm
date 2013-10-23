@@ -1,136 +1,82 @@
 package Nifty::Config;
-
-use 5.006;
 use strict;
 use warnings;
-
-=head1 NAME
-
-Nifty::Config - The great new Nifty::Config!
-
-=head1 VERSION
-
-Version 1.0.0
-
-=cut
+use YAML::XS qw/LoadFile/;
+use Hash::Merge qw/merge/;
+use File::Find qw/find/;
+use base 'Exporter';
+our @EXPORT = qw/
+	read_configs
+/;
+our @EXPORT_OK = @EXPORT;
 
 our $VERSION = '1.0.0';
 
+sub read_configs
+{
+	my ($dir, %options) = @_;
+	if ($options{raise_errors}) {
+		die "read_configs: no root directory specified\n"
+			unless $dir;
+		die "read_configs: $dir: no such file or directory\n"
+			unless -e $dir;
+		die "read_configs: $dir: not a directory\n"
+			unless -d $dir;
+	} else {
+		return undef unless $dir and -r $dir and -d $dir;
+	}
 
-=head1 SYNOPSIS
+	my @files = ();
+	find({
+		wanted => sub {
+			return unless -f $_;
+			return if substr($_, 0, 1) eq '.' and !$options{hidden};
+			return if $options{match} && $_ !~ $options{match};
+			push @files, $File::Find::name;
+		},
+	}, $dir);
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Nifty::Config;
-
-    my $foo = Nifty::Config->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
-
-sub function1 {
+	my $config = {};
+	$config = merge(LoadFile($_), $config) for sort @files;
+	$config;
 }
 
-=head2 function2
+1;
 
-=cut
+=head1 NAME
 
-sub function2 {
-}
+Nifty::Config - Configuration Routines for NiftyLogic code
 
-=head1 AUTHOR
+=head1 FUNCTIONS
 
-James Hunt, C<< <james at niftylogic.com> >>
+=head2 read_configs($dir, [%options])
 
-=head1 BUGS
+Read a single configuration, split out across several files in one
+directory sub-hierarchy.  The %options hash can be used to govern
+what files are considered for inclusion in the conglomerate
+configuration.
 
-Please report any bugs or feature requests to C<bug-nifty-config at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Nifty-Config>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+Configuration files are expected to be in YAML, since that's the
+only sane configuration file format these days.
 
+The following options are supported:
 
+=over
 
+=item B<match>
 
-=head1 SUPPORT
+A regular expression for matching individual file names.  If
+specified, only files that match this expression will be parsed.
 
-You can find documentation for this module with the perldoc command.
+=item B<hidden>
 
-    perldoc Nifty::Config
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Nifty-Config>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Nifty-Config>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Nifty-Config>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Nifty-Config/>
+A boolean that enables read_configs() to consider hidden files
+for inclusion, regardless of what matches.
 
 =back
 
+=head1 AUTHOR
 
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2013 James Hunt.
-
-This program is distributed under the (Revised) BSD License:
-L<http://www.opensource.org/licenses/bsd-license.php>
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-* Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-* Neither the name of James Hunt's Organization
-nor the names of its contributors may be used to endorse or promote
-products derived from this software without specific prior written
-permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+Written by James Hunt <james@niftylogic.com>
 
 =cut
-
-1; # End of Nifty::Config

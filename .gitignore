@@ -35,3 +35,6 @@ MYMETA.yml
 nytprof.out
 pm_to_blib
 MYMETA.json
+META.json
+
+Nifty-Config*.tar.gz

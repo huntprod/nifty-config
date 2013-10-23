@@ -1,0 +1,5 @@
+libnifty-config-perl (1.0.0-1) precise; urgency=low
+
+  * Stub changelog, built by changelog-generator
+
+ -- Package Builder <packages@niftylogic.com>  Fri, 15 Feb 2013 10:12:00 -0500

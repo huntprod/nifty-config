@@ -1,0 +1,23 @@
+Source: libnifty-config-perl
+Maintainer: Package Monkey <packages@niftylogic.com>
+Section: perl
+Priority: optional
+Homepage: http://packages.niftylogic.com/perl/Nifty-Config
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8),
+               libhash-merge-perl,
+               libtest-deep-perl,
+               libtest-exception-perl,
+               libtest-simple-perl,
+               libyaml-libyaml-perl,
+               perl,
+               perl-modules
+
+Package: libnifty-config-perl
+Description: Configuration Routines
+Architecture: all
+Depends: libhash-merge-perl,
+         libyaml-libyaml-perl,
+         perl,
+         perl-modules,
+         ${misc:Depends}

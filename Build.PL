@@ -9,13 +9,17 @@ my $builder = Module::Build->new(
     dist_author         => q{James Hunt <james@niftylogic.com>},
     dist_version_from   => 'lib/Nifty/Config.pm',
     build_requires => {
-        'Test::More' => 0,
+        'Test::More'      => 0,
+        'Test::Deep'      => 0,
+        'Test::Exception' => 0,
     },
     requires => {
-        'perl' => 5.006,
+        'Hash::Merge'     => 0,
+        'YAML::XS'        => 0,
+        'perl'            => 5.006,
     },
+    configure_requires  => { 'Module::Build' => 0.38 },
     add_to_cleanup      => [ 'Nifty-Config-*' ],
-    create_makefile_pl => 'traditional',
 );
 
 $builder->create_build_script();
