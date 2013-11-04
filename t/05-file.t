@@ -62,6 +62,13 @@ throws_ok { read_config("t/data/all", raise_errors => 1) }
 	"ENOTFILE error is thrown under raise_errors";
 
 
+$config = read_config("t/data/syntax-error.conf");
+ok !$config, "failed to read bad YAML file";
+
+throws_ok { read_config("t/data/syntax-error.conf", raise_errors => 1) }
+	qr{YAML::XS::Load Error}i,
+	"Bad YAML error thrown under raise_errors";
+
 $config = read_config("t/data/multi.conf", chain => "t/data/multi.d");
 cmp_deeply $config, {
 		toplevel => 'multi.conf supplied it',

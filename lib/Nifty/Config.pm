@@ -11,7 +11,7 @@ our @EXPORT = qw/
 /;
 our @EXPORT_OK = @EXPORT;
 
-our $VERSION = '1.1.0';
+our $VERSION = '1.1.1';
 
 sub read_config
 {
@@ -30,7 +30,11 @@ sub read_config
 		$last = $file;
 		next unless -f $file and -r $file;
 
-		my $config = LoadFile($file);
+		my $config = eval { LoadFile($file) };
+		if ($@) {
+			die $@ if $options{raise_errors};
+			return undef;
+		}
 
 		# resolve the chained stage2 config
 		if (ref($options{chain}) eq 'SCALAR') {
@@ -79,7 +83,11 @@ sub read_configs
 	}, $dir);
 
 	my $config = {};
-	$config = merge(LoadFile($_), $config) for sort @files;
+	eval { $config = merge(LoadFile($_), $config) for sort @files };
+	if ($@) {
+		die $@ if $options{raise_errors};
+		return undef;
+	}
 	$config;
 }
 

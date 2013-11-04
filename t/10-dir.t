@@ -77,4 +77,11 @@ throws_ok { read_configs("t/data/all/first.yml", raise_errors => 1) }
 	qr{read_configs: t/data/all/first\.yml: not a directory}i,
 	"ENOTDIR error is thrown under raise_errors";
 
+$config = read_configs("t/data/not-yaml");
+ok !$config, "failed to read dir with non-YAML file";
+
+throws_ok { read_configs("t/data/not-yaml", raise_errors => 1) }
+	qr{YAML::XS::Load Error}i,
+	"Bad YAML error thrown under raise_errors";
+
 done_testing;
